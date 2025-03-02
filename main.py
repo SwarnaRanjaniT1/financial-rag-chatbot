@@ -19,6 +19,14 @@ st.set_page_config(
 device = "cuda" if torch.cuda.is_available() else "cpu"
 st.sidebar.info(f"Running on device: {device}")
 
+# Display environment information
+is_streamlit_cloud = os.environ.get('IS_STREAMLIT_CLOUD') == 'true'
+if is_streamlit_cloud:
+    st.sidebar.success("Running on Streamlit Cloud")
+else:
+    # In Replit or local environment
+    pass
+
 # Initialize session state variables
 if "rag_system" not in st.session_state:
     st.session_state.rag_system = None
@@ -155,23 +163,24 @@ accurate answers to questions about financial statements.
 """)
 
 # Add hostname and connection information
-try:
-    hostname = socket.gethostname()
-    host_ip = socket.gethostbyname(hostname)
-    
-    st.sidebar.title("Connection Information")
-    st.sidebar.info(f"""
-    **Hostname:** {hostname}
-    **IP Address:** {host_ip}
-    **Port:** 5000
-    
-    To access this app from outside Replit:
-    1. Deploy the app to a cloud service like Heroku, AWS, or Azure
-    2. Or use Streamlit Cloud (streamlit.io/cloud)
-    3. Or self-host on your own server using `streamlit run main.py --server.address=0.0.0.0 --server.port=80`
-    """)
-except Exception as e:
-    pass
+if not is_streamlit_cloud:
+    try:
+        hostname = socket.gethostname()
+        host_ip = socket.gethostbyname(hostname)
+        
+        st.sidebar.title("Connection Information")
+        st.sidebar.info(f"""
+        **Hostname:** {hostname}
+        **IP Address:** {host_ip}
+        **Port:** {os.environ.get('PORT', '5000')}
+        
+        To access this app from outside Replit:
+        1. Deploy the app to a cloud service like Heroku, AWS, or Azure
+        2. Or use Streamlit Cloud (streamlit.io/cloud)
+        3. Or self-host on your own server using `streamlit run main.py --server.address=0.0.0.0 --server.port=80`
+        """)
+    except Exception as e:
+        pass
 
 # App footer
 st.markdown("---")

@@ -12,7 +12,6 @@ if not os.path.exists(nltk_data_dir):
 # Initialize NLTK resources
 try:
     nltk.download('punkt', quiet=True)
-    nltk.download('punkt_tab', quiet=True)
     nltk.download('stopwords', quiet=True)
 except Exception as e:
     print(f"Error downloading NLTK resources: {e}")
